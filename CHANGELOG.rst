@@ -1,7 +1,7 @@
 Change log
 ==========
 
-1.1.0
+1.1.1
 -----
 
 * add support for nodemeta to catalog and health end points (thanks
