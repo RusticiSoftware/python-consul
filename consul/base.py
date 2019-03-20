@@ -328,10 +328,6 @@ class Consul(object):
             except ValueError:
                 raise ConsulException('CONSUL_HTTP_AUTH invalid, '
                                       'does not match <key>:<secret>')
-            else:
-                raise ConsulException('Got a legitimate auth variable')
-        else:
-            raise ConsulException('Did not get a legitimate auth variable')
 
         self.http = self.connect(host, port, scheme, verify, cert, auth)
         self.token = os.getenv('CONSUL_HTTP_TOKEN', token)
