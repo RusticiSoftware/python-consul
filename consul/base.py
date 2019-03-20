@@ -322,8 +322,15 @@ class Consul(object):
             scheme = 'https' if use_ssl == 'true' else 'http'
         if os.getenv('CONSUL_HTTP_SSL_VERIFY') is not None:
             verify = os.getenv('CONSUL_HTTP_SSL_VERIFY') == 'true'
+        if os.getenv('CONSUL_BASIC_AUTH'):
+            try:
+                auth = os.getenv('CONSUL_BASIC_AUTH').split(':')
+            except ValueError:
+                raise ConsulException('CONSUL_BASIC_AUTH invalid, '
+                                      'does not match <key>:<secret>')
 
-        self.http = self.connect(host, port, scheme, verify, cert)
+
+        self.http = self.connect(host, port, scheme, verify, cert, auth)
         self.token = os.getenv('CONSUL_HTTP_TOKEN', token)
         self.scheme = scheme
         self.dc = dc
