@@ -325,7 +325,7 @@ class Consul(object):
             verify = os.getenv('CONSUL_HTTP_SSL_VERIFY') == 'true'
         if os.getenv('CONSUL_HTTP_AUTH'):
             try:
-                auth = os.getenv('CONSUL_HTTP_AUTH').split(':')
+                auth = tuple(os.getenv('CONSUL_HTTP_AUTH').split(':'))
             except ValueError:
                 raise ConsulException('CONSUL_HTTP_AUTH invalid, '
                                       'does not match <key>:<secret>')
