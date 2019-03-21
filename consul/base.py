@@ -247,13 +247,14 @@ class CB(object):
 
 class HTTPClient(six.with_metaclass(abc.ABCMeta, object)):
     def __init__(self, host='127.0.0.1', port=8500, scheme='http',
-                 verify=True, cert=None):
+                 verify=True, cert=None, auth=None):
         self.host = host
         self.port = port
         self.scheme = scheme
         self.verify = verify
         self.base_uri = '%s://%s:%s' % (self.scheme, self.host, self.port)
         self.cert = cert
+        self.auth = auth
 
     def uri(self, path, params=None):
         uri = self.base_uri + urllib.parse.quote(path, safe='/:')
@@ -328,8 +329,7 @@ class Consul(object):
             except ValueError:
                 raise ConsulException('CONSUL_HTTP_AUTH invalid, '
                                       'does not match <key>:<secret>')
-
-        self.http = self.connect(host, port, scheme, verify, cert, auth)
+        self.http = self.connect(host, port, scheme, verify, cert, auth=auth)
         self.token = os.getenv('CONSUL_HTTP_TOKEN', token)
         self.scheme = scheme
         self.dc = dc

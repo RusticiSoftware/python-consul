@@ -19,7 +19,7 @@ class HTTPClient(base.HTTPClient):
     def get(self, callback, path, params=None):
         uri = self.uri(path, params)
         return callback(self.response(
-            self.session.get(uri, verify=self.verify, cert=self.cert)))
+            self.session.get(uri, verify=self.verify, cert=self.cert, auth=self.auth)))
 
     def put(self, callback, path, params=None, data=''):
         uri = self.uri(path, params)
@@ -40,5 +40,5 @@ class HTTPClient(base.HTTPClient):
 
 
 class Consul(base.Consul):
-    def connect(self, host, port, scheme, verify=True, cert=None):
-        return HTTPClient(host, port, scheme, verify, cert)
+    def connect(self, host, port, scheme, verify=True, cert=None, auth=None):
+        return HTTPClient(host, port, scheme, verify, cert, auth)
