@@ -220,17 +220,17 @@ class CB(object):
         *is_id* only the 'ID' field of the json object will be returned.
         """
         def cb(response):
-            raise ValueError(f"Debug. Getting in this function. Decode is {decode}")
+            # raise ValueError(f"Debug. Getting in this function. Decode is {decode}")
             CB._status(response, allow_404=allow_404)
             if response.code == 404:
                 return response.headers['X-Consul-Index'], None
 
             data = json.loads(response.body)
 
-            if decode:
-                for item in data:
-                    if item.get(decode) is not None:
-                        item[decode] = base64.b64decode(item[decode])
+            # if decode:
+            #     for item in data:
+            #         if item.get(decode) is not None:
+            #             item[decode] = base64.b64decode(item[decode])
             if is_id:
                 data = data['ID']
             if one:
