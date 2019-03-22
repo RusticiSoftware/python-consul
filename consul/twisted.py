@@ -131,6 +131,7 @@ class Consul(base.Consul):
                 verify=True,
                 cert=None,
                 contextFactory=None,
+                auth=None,
                 **kwargs):
         return HTTPClient(
             contextFactory, host, port, scheme, verify=verify, cert=cert,

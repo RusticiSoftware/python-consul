@@ -53,5 +53,5 @@ class HTTPClient(base.HTTPClient):
 
 
 class Consul(base.Consul):
-    def connect(self, host, port, scheme, verify=True, cert=None):
+    def connect(self, host, port, scheme, verify=True, cert=None, auth=None):
         return HTTPClient(host, port, scheme, verify=verify, cert=cert)
