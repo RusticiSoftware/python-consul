@@ -225,7 +225,10 @@ class CB(object):
             if response.code == 404:
                 return response.headers['X-Consul-Index'], None
 
+            print(f'Debug. Response body is {response.body}')
             data = json.loads(response.body)
+            print(f'Debug. Json data is {data}')
+            raise ValueError("Debugging exception. Stop here.")
 
             if decode:
                 for item in data:
