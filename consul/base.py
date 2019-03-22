@@ -203,7 +203,8 @@ class CB(object):
             one=False,
             decode=False,
             is_id=False,
-            index=False):
+            index=False,
+            bytes=False):
         """
         *map* is a function to apply to the final result.
 
@@ -225,15 +226,14 @@ class CB(object):
             if response.code == 404:
                 return response.headers['X-Consul-Index'], None
 
-            print(f'Debug. Response body is {response.body}')
             data = json.loads(response.body)
-            print(f'Debug. Json data is {data}')
-            raise ValueError("Debugging exception. Stop here.")
 
             if decode:
                 for item in data:
                     if item.get(decode) is not None:
-                        item[decode] = base64.b64decode(item[decode]).decode()
+                        item[decode] = base64.b64decode(item[decode])
+                        if not bytes:
+                            item[decode] = item[decode].decode()
             if is_id:
                 data = data['ID']
             if one:
@@ -488,7 +488,8 @@ class Consul(object):
                 consistency=None,
                 keys=False,
                 separator=None,
-                dc=None):
+                dc=None,
+                bytes=False):
             """
             Returns a tuple of (*index*, *value[s]*)
 
@@ -559,7 +560,7 @@ class Consul(object):
             if not recurse and not keys:
                 one = True
             return self.agent.http.get(
-                CB.json(index=True, decode=decode, one=one),
+                CB.json(index=True, decode=decode, one=one, bytes=bytes),
                 '/v1/kv/%s' % key,
                 params=params)
 
