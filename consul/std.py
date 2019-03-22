@@ -25,18 +25,18 @@ class HTTPClient(base.HTTPClient):
         uri = self.uri(path, params)
         return callback(self.response(
             self.session.put(uri, data=data, verify=self.verify,
-                             cert=self.cert)))
+                             cert=self.cert, auth=self.auth)))
 
     def delete(self, callback, path, params=None):
         uri = self.uri(path, params)
         return callback(self.response(
-            self.session.delete(uri, verify=self.verify, cert=self.cert)))
+            self.session.delete(uri, verify=self.verify, cert=self.cert, auth=self.auth)))
 
     def post(self, callback, path, params=None, data=''):
         uri = self.uri(path, params)
         return callback(self.response(
             self.session.post(uri, data=data, verify=self.verify,
-                              cert=self.cert)))
+                              cert=self.cert, auth=self.auth)))
 
 
 class Consul(base.Consul):
