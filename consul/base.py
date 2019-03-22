@@ -203,7 +203,8 @@ class CB(object):
             one=False,
             decode=False,
             is_id=False,
-            index=False):
+            index=False,
+            bytes=False):
         """
         *map* is a function to apply to the final result.
 
@@ -230,6 +231,8 @@ class CB(object):
                 for item in data:
                     if item.get(decode) is not None:
                         item[decode] = base64.b64decode(item[decode])
+                        if not bytes:
+                            item[decode] = item[decode].decode()
             if is_id:
                 data = data['ID']
             if one:
@@ -247,13 +250,14 @@ class CB(object):
 
 class HTTPClient(six.with_metaclass(abc.ABCMeta, object)):
     def __init__(self, host='127.0.0.1', port=8500, scheme='http',
-                 verify=True, cert=None):
+                 verify=True, cert=None, auth=None):
         self.host = host
         self.port = port
         self.scheme = scheme
         self.verify = verify
         self.base_uri = '%s://%s:%s' % (self.scheme, self.host, self.port)
         self.cert = cert
+        self.auth = auth
 
     def uri(self, path, params=None):
         uri = self.base_uri + urllib.parse.quote(path, safe='/:')
@@ -322,8 +326,13 @@ class Consul(object):
             scheme = 'https' if use_ssl == 'true' else 'http'
         if os.getenv('CONSUL_HTTP_SSL_VERIFY') is not None:
             verify = os.getenv('CONSUL_HTTP_SSL_VERIFY') == 'true'
-
-        self.http = self.connect(host, port, scheme, verify, cert)
+        if os.getenv('CONSUL_HTTP_AUTH'):
+            try:
+                auth = tuple(os.getenv('CONSUL_HTTP_AUTH').split(':'))
+            except ValueError:
+                raise ConsulException('CONSUL_HTTP_AUTH invalid, '
+                                      'does not match <key>:<secret>')
+        self.http = self.connect(host, port, scheme, verify, cert, auth=auth)
         self.token = os.getenv('CONSUL_HTTP_TOKEN', token)
         self.scheme = scheme
         self.dc = dc
@@ -478,7 +487,8 @@ class Consul(object):
                 consistency=None,
                 keys=False,
                 separator=None,
-                dc=None):
+                dc=None,
+                bytes=False):
             """
             Returns a tuple of (*index*, *value[s]*)
 
@@ -549,7 +559,7 @@ class Consul(object):
             if not recurse and not keys:
                 one = True
             return self.agent.http.get(
-                CB.json(index=True, decode=decode, one=one),
+                CB.json(index=True, decode=decode, one=one, bytes=bytes),
                 '/v1/kv/%s' % key,
                 params=params)
 
