@@ -64,7 +64,7 @@ class Consul(base.Consul):
         self._loop = loop or asyncio.get_event_loop()
         super().__init__(*args, **kwargs)
 
-    def connect(self, host, port, scheme, verify=True, cert=None):
+    def connect(self, host, port, scheme, verify=True, cert=None, auth=None):
         return HTTPClient(host, port, scheme, loop=self._loop,
                           verify=verify, cert=None)
 
