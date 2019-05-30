@@ -332,6 +332,8 @@ class Consul(object):
             except ValueError:
                 raise ConsulException('CONSUL_HTTP_AUTH invalid, '
                                       'does not match <key>:<secret>')
+        else:
+            auth = None
         self.http = self.connect(host, port, scheme, verify, cert, auth=auth)
         self.token = os.getenv('CONSUL_HTTP_TOKEN', token)
         self.scheme = scheme
